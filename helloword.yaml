@@ -1,21 +1,22 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-world
-  labels:
-    app: hello-world
+  name: my-custom-container
+  namespace: my-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: hello-world
+      app: nginx
   template:
     metadata:
       labels:
-        app: hello-world
+        app: nginx
     spec:
       containers:
-        - name: hello-world
-          image: nginxdemos/hello:latest
+        - name: my-container
+          imagePullPolicy: Always
+          image: ravindrasingh6969/my-app:latest
           ports:
             - containerPort: 80
