@@ -1,35 +1,56 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: nginx-lumofy
   namespace: my-app
   labels:
     app: nginx-lumofy
 spec:
-  containers:
-    - name: nginx
-      image: nginx:1.27-alpine
-      ports:
-        - containerPort: 80
-      volumeMounts:
-        # Mount the HTML file
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-lumofy
+  template:
+    metadata:
+      labels:
+        app: nginx-lumofy
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet: { path: "/", port: 80 }
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: "/", port: 80 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: web
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+      volumes:
         - name: web
-          mountPath: /usr/share/nginx/html/index.html
-          subPath: index.html
-        # Mount the logo file
-        - name: logo
-          mountPath: /usr/share/nginx/html/logo.png
-          subPath: logo.png
-  volumes:
-    - name: web
-      configMap:
-        name: lumofy-index
-        items:
-          - key: index.html
-            path: index.html
-    - name: logo
-      configMap:
-        name: lumofy-logo
-        items:
-          - key: logo.png
-            path: logo.png
+          configMap:
+            name: lumofy-dashboard
+            items:
+              - key: index.html
+                path: index.html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-lumofy-svc
+  labels:
+    app: nginx-lumofy
+spec:
+  type: NodePort              # change to LoadBalancer/ClusterIP if needed
+  selector:
+    app: nginx-lumofy
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080         # adjust if taken
