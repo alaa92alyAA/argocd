@@ -11,7 +11,6 @@ data:
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Hello from Lumofy</title>
       <style>
-        :root { color-scheme: light; }
         body {
           margin: 0;
           height: 100vh;
@@ -21,16 +20,11 @@ data:
           color: #000000;        /* black text */
           font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         }
-        .wrap { text-align: center; }
-        img { width: clamp(200px, 40vw, 420px); height: auto; display: block; margin: 0 auto 18px; }
-        h1 { font-size: 2.25rem; letter-spacing: .5px; margin: 0; }
+        h1 { font-size: 3rem; letter-spacing: .5px; }
       </style>
     </head>
     <body>
-      <div class="wrap">
-        <img src="logo.png" alt="Lumofy logo" />
-        <h1>hello from lumofy</h1>
-      </div>
+      <h1>hello from lumofy</h1>
     </body>
     </html>
 ---
@@ -47,14 +41,9 @@ spec:
       ports:
         - containerPort: 80
       volumeMounts:
-        # Mount the HTML file
         - name: web
           mountPath: /usr/share/nginx/html/index.html
           subPath: index.html
-        # Mount the logo file
-        - name: logo
-          mountPath: /usr/share/nginx/html/logo.png
-          subPath: logo.png
   volumes:
     - name: web
       configMap:
@@ -62,9 +51,3 @@ spec:
         items:
           - key: index.html
             path: index.html
-    - name: logo
-      configMap:
-        name: lumofy-logo
-        items:
-          - key: logo.png
-            path: logo.png
