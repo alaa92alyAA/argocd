@@ -18,5 +18,5 @@ spec:
         - name: my-container
           imagePullPolicy: Always
           # image: ravindrasingh6969/my-app:latest
-          # ports:
-          #   - containerPort: 80
+          ports:
+            - containerPort: 80
