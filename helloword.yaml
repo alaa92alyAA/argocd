@@ -1,33 +1,3 @@
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   name: lumofy-index
-# data:
-#   index.html: |
-#     <!doctype html>
-#     <html lang="en">
-#     <head>
-#       <meta charset="utf-8" />
-#       <meta name="viewport" content="width=device-width, initial-scale=1" />
-#       <title>Hello from Lumofy</title>
-#       <style>
-#         body {
-#           margin: 0;
-#           height: 100vh;
-#           display: grid;
-#           place-items: center;
-#           background: #ffffff;   /* white background */
-#           color: #000000;        /* black text */
-#           font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-#         }
-#         h1 { font-size: 3rem; letter-spacing: .5px; }
-#       </style>
-#     </head>
-#     <body>
-#       <h1>hello from lumofy</h1>
-#     </body>
-#     </html>
----
 apiVersion: v1
 kind: Pod
 metadata:
@@ -41,9 +11,14 @@ spec:
       ports:
         - containerPort: 80
       volumeMounts:
+        # Mount the HTML file
         - name: web
           mountPath: /usr/share/nginx/html/index.html
           subPath: index.html
+        # Mount the logo file
+        - name: logo
+          mountPath: /usr/share/nginx/html/logo.png
+          subPath: logo.png
   volumes:
     - name: web
       configMap:
@@ -51,3 +26,9 @@ spec:
         items:
           - key: index.html
             path: index.html
+    - name: logo
+      configMap:
+        name: lumofy-logo
+        items:
+          - key: logo.png
+            path: logo.png
